@@ -1,0 +1,3 @@
+[submodule "deps/termbox2"]
+	path = deps/termbox2
+	url = https://github.com/termbox/termbox2

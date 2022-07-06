@@ -1,0 +1,14 @@
+[package]
+name = "termbox2-rs"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "termbox2"
+
+[build-dependencies]
+bindgen = "0.60.1"
+cc = "1.0.73"
+
+[[example]]
+name = "test"
