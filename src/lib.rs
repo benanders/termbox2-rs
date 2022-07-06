@@ -189,37 +189,37 @@ pub const TB_ERR_RESIZE_SELECT: c_int = TB_ERR_RESIZE_POLL;
 #[derive(Copy, Clone, Debug)]
 #[repr(C)]
 pub struct Cell {
-	pub ch: u32,
-	pub fg: u32,
-	pub bg: u32,
-	pub ech: *mut u32,
-	pub nech: usize,
-	pub cech: usize,
+    pub ch: u32,
+    pub fg: u32,
+    pub bg: u32,
+    pub ech: *mut u32,
+    pub nech: usize,
+    pub cech: usize,
 }
 
 #[derive(Copy, Clone, Default, Debug)]
 #[repr(C)]
 pub struct Event {
-	pub etype: u8,
-	pub emod: u8,
-	pub key: u16,
-	pub ch: u32,
-	pub w: i32,
-	pub h: i32,
-	pub x: i32,
-	pub y: i32,
+    pub etype: u8,
+    pub emod: u8,
+    pub key: u16,
+    pub ch: u32,
+    pub w: i32,
+    pub h: i32,
+    pub x: i32,
+    pub y: i32,
 }
 
 extern "C" {
-	pub fn tb_init() -> c_int;
-	pub fn tb_shutdown() -> c_int;
-	pub fn tb_width() -> c_int;
-	pub fn tb_height() -> c_int;
-	pub fn tb_clear() -> c_int;
-	pub fn tb_set_clear_attrs(fg: u32, bg: u32) -> c_int;
-	pub fn tb_present() -> c_int;
-	pub fn tb_set_cursor(cx: c_int, cy: c_int) -> c_int;
-	pub fn tb_hide_cursor() -> c_int;
+    pub fn tb_init() -> c_int;
+    pub fn tb_shutdown() -> c_int;
+    pub fn tb_width() -> c_int;
+    pub fn tb_height() -> c_int;
+    pub fn tb_clear() -> c_int;
+    pub fn tb_set_clear_attrs(fg: u32, bg: u32) -> c_int;
+    pub fn tb_present() -> c_int;
+    pub fn tb_set_cursor(cx: c_int, cy: c_int) -> c_int;
+    pub fn tb_hide_cursor() -> c_int;
     pub fn tb_set_cell(x: c_int, y: c_int, ch: u32, fg: u32, bg: u32) -> c_int;
     pub fn tb_set_cell_ex(x: c_int, y: c_int, ch: *const u32, nch: usize, fg: u32, bg: u32) -> c_int;
     pub fn tb_extend_cell(x: c_int, y: c_int, ch: u32) -> c_int;
