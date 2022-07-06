@@ -2,6 +2,11 @@
 name = "termbox2-rs"
 version = "0.1.0"
 edition = "2021"
+description = "Simple Rust bindings to termbox2"
+homepage = "https://github.com/benanders/termbox2-rs"
+repository = "https://github.com/benanders/termbox2-rs"
+license = "MIT"
+readme = "README.md"
 
 [lib]
 name = "termbox2"
@@ -11,4 +16,4 @@ bindgen = "0.60.1"
 cc = "1.0.73"
 
 [[example]]
-name = "test"
+name = "simple"

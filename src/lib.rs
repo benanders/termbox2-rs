@@ -186,6 +186,7 @@ pub const TB_ERR_CAP_COLLISION: c_int = -22;
 pub const TB_ERR_SELECT: c_int = TB_ERR_POLL;
 pub const TB_ERR_RESIZE_SELECT: c_int = TB_ERR_RESIZE_POLL;
 
+#[derive(Copy, Clone, Debug)]
 #[repr(C)]
 pub struct Cell {
 	pub ch: u32,
@@ -196,6 +197,7 @@ pub struct Cell {
 	pub cech: usize,
 }
 
+#[derive(Copy, Clone, Default, Debug)]
 #[repr(C)]
 pub struct Event {
 	pub etype: u8,
