@@ -1,9 +1,10 @@
 
 #![allow(non_upper_case_globals)]
 
-use std::fmt;
+use std::{fmt, io};
 use std::os::raw::c_int;
 
+use gag::Hold;
 use bitflags::bitflags;
 
 pub mod raw;
@@ -304,10 +305,11 @@ impl Event {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug)]
 pub enum InitError {
     AlreadyInitialized,
     AlreadyOpen,
+    BufferStderrFailed(io::Error),
     Other(i32),
 }
 
@@ -322,6 +324,7 @@ impl InitError {
 }
 
 pub struct Term {
+    _stderr: Hold,
     input_mode: InputMode,
     mouse_input: bool,
     rgb_output: bool,
@@ -330,8 +333,10 @@ pub struct Term {
 // TODO: proper error checking
 impl Term {
     pub fn new() -> Result<Term, InitError> {
+        let stderr = Hold::stderr().map_err(|e| InitError::BufferStderrFailed(e))?;
         match unsafe { tb_init() } {
             TB_OK => Ok(Term {
+                _stderr: stderr,
                 input_mode: Default::default(),
                 mouse_input: false,
                 rgb_output: false,
