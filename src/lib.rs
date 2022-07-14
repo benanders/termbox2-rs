@@ -246,6 +246,10 @@ bitflags! {
         const Ctrl = TB_MOD_CTRL;
         const Shift = TB_MOD_SHIFT;
         const Motion = TB_MOD_MOTION;
+        const AltShift = Self::Alt.bits | Self::Shift.bits;
+        const CtrlShift = Self::Ctrl.bits | Self::Shift.bits;
+        const CtrlAlt = Self::Ctrl.bits | Self::Alt.bits;
+        const CtrlAltShift = Self::Ctrl.bits | Self::Alt.bits | Self::Shift.bits;
     }
 }
 
