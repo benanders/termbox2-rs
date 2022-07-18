@@ -113,7 +113,7 @@ impl Style {
     }
 }
 
-#[derive(Clone, Copy, PartialEq, Debug)]
+#[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
 pub enum Key {
     Ctrl2OrTilde,
     CtrlA,
@@ -172,70 +172,69 @@ pub enum Key {
     ArrowLeft,
     ArrowRight,
     BackTab,
-    Other(u16),
 }
 
 impl Key {
-    fn from(code: u16) -> Key {
+    fn from(code: u16) -> Option<Key> {
         match code {
-            TB_KEY_CTRL_2 => Key::Ctrl2OrTilde,
-            TB_KEY_CTRL_A => Key::CtrlA,
-            TB_KEY_CTRL_B => Key::CtrlB,
-            TB_KEY_CTRL_C => Key::CtrlC,
-            TB_KEY_CTRL_D => Key::CtrlD,
-            TB_KEY_CTRL_E => Key::CtrlE,
-            TB_KEY_CTRL_F => Key::CtrlF,
-            TB_KEY_CTRL_G => Key::CtrlG,
-            TB_KEY_BACKSPACE => Key::BackspaceOrCtrlH,
-            TB_KEY_TAB => Key::TabOrCtrlI,
-            TB_KEY_CTRL_J => Key::CtrlJ,
-            TB_KEY_CTRL_K => Key::CtrlK,
-            TB_KEY_CTRL_L => Key::CtrlL,
-            TB_KEY_ENTER => Key::EnterOrCtrlM,
-            TB_KEY_CTRL_N => Key::CtrlN,
-            TB_KEY_CTRL_O => Key::CtrlO,
-            TB_KEY_CTRL_P => Key::CtrlP,
-            TB_KEY_CTRL_Q => Key::CtrlQ,
-            TB_KEY_CTRL_R => Key::CtrlR,
-            TB_KEY_CTRL_S => Key::CtrlS,
-            TB_KEY_CTRL_T => Key::CtrlT,
-            TB_KEY_CTRL_U => Key::CtrlU,
-            TB_KEY_CTRL_V => Key::CtrlV,
-            TB_KEY_CTRL_W => Key::CtrlW,
-            TB_KEY_CTRL_X => Key::CtrlX,
-            TB_KEY_CTRL_Y => Key::CtrlY,
-            TB_KEY_CTRL_Z => Key::CtrlZ,
-            TB_KEY_ESC => Key::EscOrLSqBracketOr3,
-            TB_KEY_CTRL_4 => Key::Ctrl4OrBackslash,
-            TB_KEY_CTRL_5 => Key::Ctrl5OrRSqBracket,
-            TB_KEY_CTRL_6 => Key::Ctrl6,
-            TB_KEY_CTRL_7 => Key::Ctrl7OrSlashOrUnderscore,
-            TB_KEY_SPACE => Key::Space,
-            TB_KEY_BACKSPACE2 => Key::Backspace2OrCtrl8,
-            TB_KEY_F1 => Key::F1,
-            TB_KEY_F2 => Key::F2,
-            TB_KEY_F3 => Key::F3,
-            TB_KEY_F4 => Key::F4,
-            TB_KEY_F5 => Key::F5,
-            TB_KEY_F6 => Key::F6,
-            TB_KEY_F7 => Key::F7,
-            TB_KEY_F8 => Key::F8,
-            TB_KEY_F9 => Key::F9,
-            TB_KEY_F10 => Key::F10,
-            TB_KEY_F11 => Key::F11,
-            TB_KEY_F12 => Key::F12,
-            TB_KEY_INSERT => Key::Insert,
-            TB_KEY_DELETE => Key::Delete,
-            TB_KEY_HOME => Key::Home,
-            TB_KEY_END => Key::End,
-            TB_KEY_PGUP => Key::PgUp,
-            TB_KEY_PGDN => Key::PgDn,
-            TB_KEY_ARROW_UP => Key::ArrowUp,
-            TB_KEY_ARROW_DOWN => Key::ArrowDown,
-            TB_KEY_ARROW_LEFT => Key::ArrowLeft,
-            TB_KEY_ARROW_RIGHT => Key::ArrowRight,
-            TB_KEY_BACK_TAB => Key::BackTab,
-            _ => Key::Other(code),
+            TB_KEY_CTRL_2 => Some(Key::Ctrl2OrTilde),
+            TB_KEY_CTRL_A => Some(Key::CtrlA),
+            TB_KEY_CTRL_B => Some(Key::CtrlB),
+            TB_KEY_CTRL_C => Some(Key::CtrlC),
+            TB_KEY_CTRL_D => Some(Key::CtrlD),
+            TB_KEY_CTRL_E => Some(Key::CtrlE),
+            TB_KEY_CTRL_F => Some(Key::CtrlF),
+            TB_KEY_CTRL_G => Some(Key::CtrlG),
+            TB_KEY_BACKSPACE => Some(Key::BackspaceOrCtrlH),
+            TB_KEY_TAB => Some(Key::TabOrCtrlI),
+            TB_KEY_CTRL_J => Some(Key::CtrlJ),
+            TB_KEY_CTRL_K => Some(Key::CtrlK),
+            TB_KEY_CTRL_L => Some(Key::CtrlL),
+            TB_KEY_ENTER => Some(Key::EnterOrCtrlM),
+            TB_KEY_CTRL_N => Some(Key::CtrlN),
+            TB_KEY_CTRL_O => Some(Key::CtrlO),
+            TB_KEY_CTRL_P => Some(Key::CtrlP),
+            TB_KEY_CTRL_Q => Some(Key::CtrlQ),
+            TB_KEY_CTRL_R => Some(Key::CtrlR),
+            TB_KEY_CTRL_S => Some(Key::CtrlS),
+            TB_KEY_CTRL_T => Some(Key::CtrlT),
+            TB_KEY_CTRL_U => Some(Key::CtrlU),
+            TB_KEY_CTRL_V => Some(Key::CtrlV),
+            TB_KEY_CTRL_W => Some(Key::CtrlW),
+            TB_KEY_CTRL_X => Some(Key::CtrlX),
+            TB_KEY_CTRL_Y => Some(Key::CtrlY),
+            TB_KEY_CTRL_Z => Some(Key::CtrlZ),
+            TB_KEY_ESC => Some(Key::EscOrLSqBracketOr3),
+            TB_KEY_CTRL_4 => Some(Key::Ctrl4OrBackslash),
+            TB_KEY_CTRL_5 => Some(Key::Ctrl5OrRSqBracket),
+            TB_KEY_CTRL_6 => Some(Key::Ctrl6),
+            TB_KEY_CTRL_7 => Some(Key::Ctrl7OrSlashOrUnderscore),
+            TB_KEY_SPACE => Some(Key::Space),
+            TB_KEY_BACKSPACE2 => Some(Key::Backspace2OrCtrl8),
+            TB_KEY_F1 => Some(Key::F1),
+            TB_KEY_F2 => Some(Key::F2),
+            TB_KEY_F3 => Some(Key::F3),
+            TB_KEY_F4 => Some(Key::F4),
+            TB_KEY_F5 => Some(Key::F5),
+            TB_KEY_F6 => Some(Key::F6),
+            TB_KEY_F7 => Some(Key::F7),
+            TB_KEY_F8 => Some(Key::F8),
+            TB_KEY_F9 => Some(Key::F9),
+            TB_KEY_F10 => Some(Key::F10),
+            TB_KEY_F11 => Some(Key::F11),
+            TB_KEY_F12 => Some(Key::F12),
+            TB_KEY_INSERT => Some(Key::Insert),
+            TB_KEY_DELETE => Some(Key::Delete),
+            TB_KEY_HOME => Some(Key::Home),
+            TB_KEY_END => Some(Key::End),
+            TB_KEY_PGUP => Some(Key::PgUp),
+            TB_KEY_PGDN => Some(Key::PgDn),
+            TB_KEY_ARROW_UP => Some(Key::ArrowUp),
+            TB_KEY_ARROW_DOWN => Some(Key::ArrowDown),
+            TB_KEY_ARROW_LEFT => Some(Key::ArrowLeft),
+            TB_KEY_ARROW_RIGHT => Some(Key::ArrowRight),
+            TB_KEY_BACK_TAB => Some(Key::BackTab),
+            _ => None,
         }
     }
 }
@@ -261,19 +260,18 @@ pub enum Mouse {
     Release,
     WheelUp,
     WheelDown,
-    Other(u16),
 }
 
 impl Mouse {
-    fn from(code: u16) -> Mouse {
+    fn from(code: u16) -> Option<Mouse> {
         match code {
-            TB_KEY_MOUSE_LEFT => Mouse::Left,
-            TB_KEY_MOUSE_MIDDLE => Mouse::Middle,
-            TB_KEY_MOUSE_RIGHT => Mouse::Right,
-            TB_KEY_MOUSE_RELEASE => Mouse::Release,
-            TB_KEY_MOUSE_WHEEL_UP => Mouse::WheelUp,
-            TB_KEY_MOUSE_WHEEL_DOWN => Mouse::WheelDown,
-            _ => Mouse::Other(code),
+            TB_KEY_MOUSE_LEFT => Some(Mouse::Left),
+            TB_KEY_MOUSE_MIDDLE => Some(Mouse::Middle),
+            TB_KEY_MOUSE_RIGHT => Some(Mouse::Right),
+            TB_KEY_MOUSE_RELEASE => Some(Mouse::Release),
+            TB_KEY_MOUSE_WHEEL_UP => Some(Mouse::WheelUp),
+            TB_KEY_MOUSE_WHEEL_DOWN => Some(Mouse::WheelDown),
+            _ => None,
         }
     }
 }
@@ -287,24 +285,18 @@ pub enum Event {
 }
 
 impl Event {
-    fn from(ev: raw::Event) -> Event {
+    fn from(ev: raw::Event) -> Option<Event> {
         match ev.etype {
             TB_EVENT_KEY => {
                 if ev.key == 0 {
-                    match char::from_u32(ev.ch) {
-                        Some(ch) => Event::Char(ch),
-                        None => panic!("Internal termbox2 error"),
-                    }
+                    Some(Event::Char(char::from_u32(ev.ch)?))
                 } else {
-                    match Modifiers::from_bits(ev.emod) {
-                        Some(mods) => Event::Key(Key::from(ev.key), mods),
-                        None => panic!("Internal termbox2 error"),
-                    }
+                    Some(Event::Key(Key::from(ev.key)?, Modifiers::from_bits(ev.emod)?))
                 }
             }
-            TB_EVENT_RESIZE => Event::Resize(ev.w as u32, ev.h as u32),
-            TB_EVENT_MOUSE => Event::Mouse(Mouse::from(ev.key), ev.x as u32, ev.y as u32),
-            _ => panic!("Internal termbox2 error"),
+            TB_EVENT_RESIZE => Some(Event::Resize(ev.w as u32, ev.h as u32)),
+            TB_EVENT_MOUSE => Some(Event::Mouse(Mouse::from(ev.key)?, ev.x as u32, ev.y as u32)),
+            _ => None,
         }
     }
 }
@@ -423,17 +415,22 @@ impl Term {
     }
 
     pub fn peek_event(&self, timeout_ms: u32) -> Option<Event> {
-        let mut ev = Default::default();
-        match unsafe { tb_peek_event(&mut ev, timeout_ms as c_int) } {
+        let mut raw = Default::default();
+        match unsafe { tb_peek_event(&mut raw, timeout_ms as c_int) } {
             TB_ERR_NO_EVENT => None,
-            _ => Some(Event::from(ev)),
+            _ => Event::from(raw),
         }
     }
 
     pub fn poll_event(&self) -> Event {
-        let mut ev = Default::default();
-        unsafe { tb_poll_event(&mut ev); }
-        Event::from(ev)
+        loop {
+            let mut raw = Default::default();
+            unsafe { tb_poll_event(&mut raw); }
+            let event = Event::from(raw);
+            if let Some(event) = event {
+                return event;
+            }
+        }
     }
 }
 
