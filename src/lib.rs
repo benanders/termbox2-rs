@@ -381,7 +381,7 @@ impl Term {
     }
 
     fn to_attrs(&self, style: Style, fg: Color, bg: Color) -> (u32, u32) {
-        if self.output_mode == OutputMode::Normal {
+        if self.output_mode == OutputMode::RGB {
             (fg.to_256color() | style.to_256color(), bg.to_256color() | style.to_256color())
         } else {
             (fg.to_8color() | style.to_8color(), bg.to_8color() | style.to_8color())
