@@ -88,7 +88,7 @@ impl Color {
             Color::Cyan => 0x00ffff,
             Color::White => 0xffffff,
             Color::RGB(r, g, b) => (r as u32) << 16 | (g as u32) << 8 | b as u32,
-            Color::Default => panic!("Can't use default color in 256-bit color mode"),
+            Color::Default => panic!("Can't use default color in RGB output mode"),
         }
     }
 }
@@ -439,5 +439,43 @@ impl Drop for Term {
         // tb_shutdown only ever produces TB_OK or TB_ERR_NOT_INIT which we can
         // safely ignore here
         unsafe { tb_shutdown(); }
+    }
+}
+
+pub struct Window {
+    x: u32,
+    y: u32,
+    width: u32,
+    height: u32,
+}
+
+impl Window {
+    pub fn new(x: u32, y: u32, width: u32, height: u32) -> Window {
+        Window { x, y, width, height }
+    }
+
+    pub fn origin(&self) -> (u32, u32) {
+        (self.x, self.y)
+    }
+
+    pub fn size(&self) -> (u32, u32) {
+        (self.width, self.height)
+    }
+
+    pub fn set_origin(&mut self, x: u32, y: u32) {
+        self.x = x;
+        self.y = y;
+    }
+
+    pub fn set_size(&mut self, width: u32, height: u32) {
+        self.width = width;
+        self.height = height;
+    }
+
+    pub fn set_cell(&self, t: &Term, x: u32, y: u32, ch: char, style: Style, fg: Color, bg: Color) {
+        if x + self.x >= self.width || y + self.y >= self.height {
+            return; // Out of bounds
+        }
+        t.set_cell(x + self.x, y + self.y, ch, style, fg, bg);
     }
 }
