@@ -2,6 +2,7 @@
 #![allow(non_upper_case_globals)]
 
 use std::{fmt, io};
+use std::ffi::CString;
 use std::os::raw::c_int;
 
 use gag::Hold;
@@ -410,6 +411,12 @@ impl Term {
         unsafe { tb_set_cell(x as c_int, y as c_int, ch as u32, fg, bg); }
     }
 
+    pub fn print(&self, x: u32, y: u32, s: &str, style: Style, fg: Color, bg: Color) {
+        let (fg, bg) = self.to_attrs(style, fg, bg);
+        let c = CString::new(s).unwrap();
+        unsafe { tb_print(x as c_int, y as c_int, fg, bg, c.as_c_str().as_ptr()); }
+    }
+
     pub fn present(&self) {
         unsafe { tb_present(); }
     }
@@ -439,47 +446,5 @@ impl Drop for Term {
         // tb_shutdown only ever produces TB_OK or TB_ERR_NOT_INIT which we can
         // safely ignore here
         unsafe { tb_shutdown(); }
-    }
-}
-
-pub struct Window {
-    x: u32,
-    y: u32,
-    width: u32,
-    height: u32,
-}
-
-impl Window {
-    pub fn new(x: u32, y: u32, width: u32, height: u32) -> Window {
-        Window { x, y, width, height }
-    }
-
-    pub fn origin(&self) -> (u32, u32) {
-        (self.x, self.y)
-    }
-
-    pub fn size(&self) -> (u32, u32) {
-        (self.width, self.height)
-    }
-
-    pub fn set_origin(&mut self, x: u32, y: u32) {
-        self.x = x;
-        self.y = y;
-    }
-
-    pub fn set_size(&mut self, width: u32, height: u32) {
-        self.width = width;
-        self.height = height;
-    }
-
-    pub fn set_cell(&self, t: &Term, x: u32, y: u32, ch: char, style: Style, fg: Color, bg: Color) {
-        if x + self.x >= self.width || y + self.y >= self.height {
-            return; // Out of bounds
-        }
-        t.set_cell(x + self.x, y + self.y, ch, style, fg, bg);
-    }
-
-    pub fn set_cursor(&self, t: &Term, x: u32, y: u32) {
-        t.set_cursor(x + self.x, y + self.y);
     }
 }
