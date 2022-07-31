@@ -15,6 +15,8 @@ pub enum InputMode {
     #[default]
     Esc,
     Alt,
+    EscMouse,
+    AltMouse,
 }
 
 impl InputMode {
@@ -22,6 +24,24 @@ impl InputMode {
         match self {
             InputMode::Esc => TB_INPUT_ESC,
             InputMode::Alt => TB_INPUT_ALT,
+            InputMode::EscMouse => TB_INPUT_ESC | TB_INPUT_MOUSE,
+            InputMode::AltMouse => TB_INPUT_ALT | TB_INPUT_MOUSE,
+        }
+    }
+}
+
+#[derive(Clone, Copy, PartialEq, Default, Debug)]
+pub enum OutputMode {
+    #[default]
+    Normal,
+    RGB,
+}
+
+impl OutputMode {
+    fn to_tb(&self) -> c_int {
+        match self {
+            OutputMode::Normal => TB_OUTPUT_NORMAL,
+            OutputMode::RGB => TB_OUTPUT_TRUECOLOR,
         }
     }
 }
@@ -321,9 +341,7 @@ impl InitError {
 
 pub struct Term {
     _stderr: Hold,
-    input_mode: InputMode,
-    mouse_input: bool,
-    rgb_output: bool,
+    output_mode: OutputMode,
 }
 
 // TODO: proper error checking
@@ -333,9 +351,7 @@ impl Term {
         match unsafe { tb_init() } {
             TB_OK => Ok(Term {
                 _stderr: stderr,
-                input_mode: Default::default(),
-                mouse_input: false,
-                rgb_output: false,
+                output_mode: Default::default(),
             }),
             err => Err(InitError::from(err)),
         }
@@ -349,12 +365,23 @@ impl Term {
         unsafe { tb_height() as u32 }
     }
 
-    pub fn clear(&self) {
-        unsafe { tb_clear(); }
+    pub fn has_rgb_support(&self) -> bool {
+        unsafe { tb_has_truecolor() != 0 }
+    }
+
+    pub fn set_input_mode(&mut self, mode: InputMode) {
+        let mode = mode.to_tb();
+        unsafe { tb_set_input_mode(mode); }
+    }
+
+    pub fn set_output_mode(&mut self, mode: OutputMode) {
+        self.output_mode = mode;
+        let mode = mode.to_tb();
+        unsafe { tb_set_output_mode(mode); }
     }
 
     fn to_attrs(&self, style: Style, fg: Color, bg: Color) -> (u32, u32) {
-        if self.rgb_output {
+        if self.output_mode == OutputMode::Normal {
             (fg.to_256color() | style.to_256color(), bg.to_256color() | style.to_256color())
         } else {
             (fg.to_8color() | style.to_8color(), bg.to_8color() | style.to_8color())
@@ -366,8 +393,8 @@ impl Term {
         unsafe { tb_set_clear_attrs(fg, bg); }
     }
 
-    pub fn present(&self) {
-        unsafe { tb_present(); }
+    pub fn clear(&self) {
+        unsafe { tb_clear(); }
     }
 
     pub fn set_cursor(&self, x: u32, y: u32) {
@@ -383,35 +410,8 @@ impl Term {
         unsafe { tb_set_cell(x as c_int, y as c_int, ch as u32, fg, bg); }
     }
 
-    pub fn has_rgb_support(&self) -> bool {
-        unsafe { tb_has_truecolor() != 0 }
-    }
-
-    pub fn set_rgb(&mut self, use_rgb: bool) {
-        self.rgb_output = use_rgb;
-        if use_rgb {
-            unsafe { tb_set_output_mode(TB_OUTPUT_TRUECOLOR); }
-        } else {
-            unsafe { tb_set_output_mode(TB_OUTPUT_NORMAL); }
-        }
-    }
-
-    pub fn set_input_mode(&mut self, mode: InputMode) {
-        self.input_mode = mode;
-        if self.mouse_input {
-            unsafe { tb_set_input_mode(mode.to_tb() | TB_INPUT_MOUSE); }
-        } else {
-            unsafe { tb_set_input_mode(mode.to_tb()); }
-        }
-    }
-
-    pub fn set_mouse_input(&mut self, mouse: bool) {
-        self.mouse_input = mouse;
-        if self.mouse_input {
-            unsafe { tb_set_input_mode(self.input_mode.to_tb() | TB_INPUT_MOUSE); }
-        } else {
-            unsafe { tb_set_input_mode(self.input_mode.to_tb()); }
-        }
+    pub fn present(&self) {
+        unsafe { tb_present(); }
     }
 
     pub fn peek_event(&self, timeout_ms: u32) -> Option<Event> {
