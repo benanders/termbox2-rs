@@ -478,4 +478,8 @@ impl Window {
         }
         t.set_cell(x + self.x, y + self.y, ch, style, fg, bg);
     }
+
+    pub fn set_cursor(&self, t: &Term, x: u32, y: u32) {
+        t.set_cursor(x + self.x, y + self.y);
+    }
 }
