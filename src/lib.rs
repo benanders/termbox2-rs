@@ -411,10 +411,13 @@ impl Term {
         unsafe { tb_set_cell(x as c_int, y as c_int, ch as u32, fg, bg); }
     }
 
-    pub fn print(&self, x: u32, y: u32, s: &str, style: Style, fg: Color, bg: Color) {
+    /// Returns the width of the printed string.
+    pub fn print(&self, x: u32, y: u32, s: &str, style: Style, fg: Color, bg: Color) -> u32 {
         let (fg, bg) = self.to_attrs(style, fg, bg);
         let c = CString::new(s).unwrap();
-        unsafe { tb_print(x as c_int, y as c_int, fg, bg, c.as_c_str().as_ptr()); }
+        let mut w = 0;
+        unsafe { tb_print_ex(x as c_int, y as c_int, fg, bg, &mut w, c.as_c_str().as_ptr()); }
+        w as u32
     }
 
     pub fn present(&self) {

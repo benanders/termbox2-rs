@@ -228,6 +228,7 @@ extern "C" {
     pub fn tb_peek_event(event: *mut Event, timeout_ms: c_int) -> c_int;
     pub fn tb_poll_event(event: *mut Event) -> c_int;
     pub fn tb_print(x: c_int, y: c_int, fg: u32, bg: u32, s: *const c_char) -> c_int;
+    pub fn tb_print_ex(x: c_int, y: c_int, fg: u32, bg: u32, w: *mut usize, s: *const c_char) -> c_int;
     pub fn tb_send(buf: *const c_char, nbuf: usize);
 
     pub fn tb_utf8_char_length(c: c_char) -> c_int;
