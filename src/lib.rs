@@ -300,7 +300,7 @@ impl Mouse {
 #[derive(Clone, Copy, PartialEq, Debug)]
 pub enum Event {
     Key(Key, Modifiers),
-    Char(char),
+    Char(char, Modifiers),
     Mouse(Mouse, u32, u32),
     Resize(u32, u32),
 }
@@ -309,10 +309,11 @@ impl Event {
     fn from(ev: raw::Event) -> Option<Event> {
         match ev.etype {
             TB_EVENT_KEY => {
+                let mods = Modifiers::from_bits(ev.emod)?;
                 if ev.key == 0 {
-                    Some(Event::Char(char::from_u32(ev.ch)?))
+                    Some(Event::Char(char::from_u32(ev.ch)?, mods))
                 } else {
-                    Some(Event::Key(Key::from(ev.key)?, Modifiers::from_bits(ev.emod)?))
+                    Some(Event::Key(Key::from(ev.key)?, mods))
                 }
             }
             TB_EVENT_RESIZE => Some(Event::Resize(ev.w as u32, ev.h as u32)),
